@@ -1,66 +1,96 @@
-🛡️ Güvenli Dosya Yükleme Servisi (Django + REST)
+🛡️ Güvenli Dosya Yükleme Sistemi
 
-Bu proje, kullanıcıların dosya yükleyebildiği fakat güvenlik odaklı kurallar ile korunan bir backend servisidir.
-Temel amaç, dosya boyutu, kullanıcı kotası, MIME tipi ve VirusTotal taraması gibi kontrolleri entegre ederek güvenli bir dosya saklama altyapısı sunmaktır.
+(Django REST + VirusTotal + MIME Doğrulama + Kota Yönetimi)
 
-Backend: Django + Django REST Framework
-Auth: JWT (SimpleJWT)
-Deploy: Render + Docker (opsiyonel)
-CI: GitHub Actions + pytest
+Bu proje, kullanıcıların dosya yükleyebildiği fakat yüklenen dosyaların güvenlik testlerinden geçmeden sisteme kabul edilmediği profesyonel bir backend servisidir.
+Amaç; siber güvenlik, dosya doğrulama ve tehdit tespiti odaklı güvenli bir dosya yönetim altyapısı sunmaktır.
 
-📑 İçindekiler
+📘 İçindekiler
 
-Özellikler
+1️⃣ Özellikler
 
-Teknolojiler
+2️⃣ Mimarî Yapı
 
-Mimari Özeti
+3️⃣ Kullanılan Teknolojiler
 
-Kurulum
+4️⃣ Kurulum & Çalıştırma
 
-API Uç Noktaları
+5️⃣ API Uç Noktaları
 
-Güvenlik Kuralları
+6️⃣ Güvenlik Mekanizmaları
 
-Testler
+7️⃣ Test Altyapısı (pytest)
 
-Docker ile Çalıştırma
+8️⃣ Docker Desteği
 
-Render Deploy
+9️⃣ Render Deploy
 
-CI/CD (GitHub Actions)
+🔟 CI/CD – GitHub Actions
 
-Geliştirici Notları
+1️⃣1️⃣ Geliştirici Notları
 
-🔐 Özellikler
+1️⃣ Özellikler
+✔ Güvenli Dosya Yükleme
 
-JWT kimlik doğrulama
+Dosya boyutu kontrolü (max 10 MB)
 
-Kullanıcı bazlı disk kotası
-
-Maksimum dosya boyutu (10 MB)
-
-MIME tipi doğrulama (whitelist & blacklist)
+MIME tipi doğrulama (whitelist + blacklist)
 
 python-magic ile gerçek içerik analizi
 
-VirusTotal API ile virüs tarama
+✔ Virüs Tespiti (VirusTotal API)
 
-Tüm aksiyonların VirusLog tablosuna kaydı
+Dosya temp olarak kaydedilir
 
-Yüklenen dosyaların UploadedFile modelinde kayıt altına alınması
+VirusTotal üzerinden taranır
 
-Kullanıcı depolama istatistikleri
+Sonuç loglanır
 
-Otomatik testler (pytest)
+Zararlı dosyalar engellenir
 
-CI pipeline (GitHub Actions)
+✔ Kullanıcı Kota Yönetimi
 
-Render üzerinde Production-ready deploy
+Her kullanıcının depolama sınırı var
 
-🧰 Teknolojiler
+Kota dolduğunda yükleme engellenir
 
-Python 3.13
+Kullanıcı depolama istatistikleri API üzerinden alınabilir
+
+✔ Loglama Sistemi
+
+Tüm işlemler VirusLog tablosuna kaydedilir
+
+Kim yükledi?
+
+Dosya adı?
+
+Temiz/Virüslü?
+
+SHA256?
+
+Detaylı sonuç?
+
+✔ JWT Kimlik Doğrulama (SimpleJWT)
+
+Login → Token üretme
+
+Token ile dosya yükleme izni
+
+2️⃣ Mimarî Yapı
+guvenli-dosya-yukleme/
+├── core/                → Django çekirdek ayarları
+├── upload/              → Dosya yükleme uygulaması
+│   ├── models.py        → UploadedFile, VirusLog, UserQuota
+│   ├── views.py         → upload_file(), list_files(), stats
+│   ├── utils.py         → VirusTotal entegrasyonu
+│   ├── tests/           → pytest dosyaları
+│   └── serializers.py
+├── requirements.txt
+├── Dockerfile
+└── .github/workflows/ci.yml
+
+3️⃣ Kullanılan Teknolojiler
+Backend
 
 Django 5.2.8
 
@@ -72,49 +102,35 @@ django-cors-headers
 
 python-magic
 
-pytest + pytest-django
+requests
+
+Test
+
+pytest
+
+pytest-django
+
+Dağıtım
+
+Render
 
 Docker (opsiyonel)
 
-Render Deploy
-
 GitHub Actions
 
-🧱 Mimari Özeti
-Modeller
-
-UserQuota
-
-UploadedFile
-
-VirusLog
-
-Modüller
-
-upload/views.py → dosya yükleme, MIME, kota, VT kontrolü
-
-upload/utils.py → VirusTotal fonksiyonu
-
-upload/tests/ → pytest testleri
-
-core/settings.py → REST, JWT, CORS, ENV ayarları
-
-⚙ Kurulum
-1. Depoyu Klonla
+4️⃣ Kurulum & Çalıştırma
+1. Projeyi klonla
 git clone https://github.com/Sametzn/guvenli-dosya-yukleme.git
 cd guvenli-dosya-yukleme
 
-2. Sanal Ortam
+2. Sanal ortam kur
 python -m venv venv
 venv\Scripts\activate
 
 3. Gereksinimler
 pip install -r requirements.txt
 
-4. .env Dosyası
-
-Kök dizine .env ekle:
-
+4. .env oluştur
 SECRET_KEY=xxx
 DEBUG=True
 ALLOWED_HOSTS=127.0.0.1,localhost
@@ -123,52 +139,32 @@ VIRUSTOTAL_API_KEY=xxx
 5. Migrasyonlar
 python manage.py migrate
 
-6. Süper Kullanıcı
+6. Süper kullanıcı
 python manage.py createsuperuser
 
 7. Çalıştır
 python manage.py runserver
 
-🌐 API Uç Noktaları
-POST /api/login/
+5️⃣ API Uç Noktaları
+🔐 Auth
+Yöntem	URL	Açıklama
+POST	/api/login/	JWT Login
+📤 Dosya Yükleme
+URL	Açıklama
+POST /api/upload/	Dosya yükleme + güvenlik kontrolleri
+📄 Dosya Listesi
+URL	Açıklama
+GET /api/list_files/	Kullanıcının yüklediği dosyalar
+📊 Kullanıcı Kota Bilgisi
+URL	Açıklama
+GET /api/user_stats/	Depolama durumu
+6️⃣ Güvenlik Mekanizmaları
+✔ Dosya Boyutu Kontrolü
 
-JWT login.
+Max 10 MB
 
-POST /api/upload/
-
-Dosya yükleme.
-Kontroller:
-
-Dosya seçili mi
-
-Kota yeterli mi
-
-10MB sınırı
-
-MIME whitelist / blacklist
-
-VirusTotal scan
-
-GET /api/list_files/
-
-Kullanıcı dosya listesi.
-
-GET /api/user_stats/
-
-Kullanıcı depolama bilgileri.
-
-🛡 Güvenlik Kuralları
-1. Kullanıcı Kotası
-
-UserQuota modeli ile takip edilir.
-
-2. Max Dosya Boyutu
-
-10 MB limit.
-
-3. MIME Tipi Kontrolü
-
-Whitelist
+✔ MIME Tipi Kontrolü
+Whitelist:
 
 pdf
 
@@ -182,28 +178,46 @@ text/plain
 
 docx
 
-Blacklist
+Blacklist:
 
 exe
 
 dosexec
 
-executable
+portable executable
 
-portable-executable
+✔ Gerçek İçerik Analizi (python-magic)
 
-4. VirusTotal Taraması
+application/x-msdownload gibi tehlikeli içerikler reddedilir.
 
-Dosya önce temp’e kaydedilir → taranır → temizse yüklenir.
+✔ VirusTotal Tarama
 
-🧪 Testler
+Temp’e kaydedilir
 
-Tüm testleri çalıştır:
+VirusTotal ID → sonuç
+
+Virüslüyse yükleme engellenir
+
+✔ Loglama
+
+Her işlem VirusLog tablosuna yazılır.
+
+7️⃣ Test Altyapısı (pytest)
+
+Testleri çalıştır:
 
 pytest -v
 
 
 Kapsanan testler:
+
+test_login_success
+
+test_login_fail
+
+test_no_file
+
+test_file_too_big
 
 test_quota_block
 
@@ -211,35 +225,27 @@ test_mime_block
 
 test_infected_file_block
 
+test_clean_file_upload
+
 test_magic_error
-
-test_no_file
-
-test_file_too_big
 
 test_unauthorized_upload
 
-test_clean_file_upload
-
-test_login_success
-
-test_login_fail
-
-🐳 Docker ile Çalıştırma
-Docker Build
+8️⃣ Docker Desteği
+Docker Image oluştur:
 docker build -t guvenli-backend .
 
-Çalıştır
+Çalıştır:
 docker run -p 8000:8000 guvenli-backend
 
-☁ Render Deploy
-Build command
+9️⃣ Render Deploy
+Build Command:
 pip install -r requirements.txt
 
-Start command
+Start Command:
 gunicorn core.wsgi:application --bind 0.0.0.0:8000
 
-Environment variables
+Environment Variables:
 
 SECRET_KEY
 
@@ -249,24 +255,22 @@ ALLOWED_HOSTS
 
 VIRUSTOTAL_API_KEY
 
-Render otomatik deploy oluşturur.
+Backend artık internet üzerinde canlı çalışır.
 
-🔁 CI/CD (GitHub Actions)
+🔟 CI/CD – GitHub Actions
 
-.github/workflows/ci.yml içinde yer alır.
+.github/workflows/ci.yml otomatik çalışır.
 
-Pipeline:
+Pipeline’da neler olur?
 
 Python kurulumu
 
 Dependencies
 
-pytest
+Django ayarları
 
-Django settings → core.settings
+pytest (otomatik)
 
-Trigger:
+Build kontrol
 
-push
-
-pull_request
+Her push ve pull request'te otomatik çalışır.
