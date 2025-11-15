@@ -1,0 +1,44 @@
+<div class="login-container">
+  <mat-card>
+    <h2>🔐 Dosya Yükleme Sistemi</h2>
+
+    <!-- ENTER İLE GİRİŞ GARANTİ ÇALIŞIR -->
+    <form (ngSubmit)="login()">
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Kullanıcı Adı</mat-label>
+        <input
+          matInput
+          [(ngModel)]="username"
+          name="username"
+          required
+        />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Şifre</mat-label>
+        <input
+          matInput
+          [(ngModel)]="password"
+          type="password"
+          name="password"
+          required
+        />
+      </mat-form-field>
+
+      <div class="btn-group">
+        <button mat-raised-button color="primary" type="submit">
+          Giriş Yap
+        </button>
+
+        <button mat-raised-button color="accent" type="button" (click)="register()">
+          Kayıt Ol
+        </button>
+      </div>
+
+    </form>
+
+    <p class="message">{{ message }}</p>
+
+  </mat-card>
+</div>

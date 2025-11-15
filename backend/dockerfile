@@ -1,0 +1,24 @@
+FROM python:3.12-slim
+
+# 1) Sistem güncelle
+RUN apt-get update && apt-get install -y \
+    libmagic1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# 2) Çalışma dizini
+WORKDIR /app
+
+# 3) requirements kopyala
+COPY requirements.txt .
+
+# 4) Paketleri kur
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 5) Projeyi kopyala
+COPY . .
+
+# 6) Django port
+EXPOSE 8000
+
+# 7) Sunucu çalıştır
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

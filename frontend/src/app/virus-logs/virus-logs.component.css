@@ -1,0 +1,59 @@
+/* Sağ üste hizala */
+.back-container {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 15px;
+  padding-right: 10px;
+}
+
+/* Modern gradient buton */
+.back-btn {
+  background: linear-gradient(135deg, #1565c0, #1e88e5);
+  color: white !important;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(30, 136, 229, 0.3);
+  transition: 0.25s ease;
+}
+
+/* Hover efekti */
+.back-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(30, 136, 229, 0.45);
+}
+
+/* Basılınca hafif içeri gömülme efekti */
+.back-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 3px 8px rgba(30, 136, 229, 0.3);
+}
+.back-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.back-btn {
+  background-color: #1e88e5;
+  color: white;
+  font-weight: 500;
+}
+
+.back-btn:hover {
+  background-color: #1565c0;
+}
+
+.expand-btn {
+  background: none;
+  border: none;
+  color: #1976d2;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0;
+}
+
+.expand-btn:hover {
+  text-decoration: underline;
+}

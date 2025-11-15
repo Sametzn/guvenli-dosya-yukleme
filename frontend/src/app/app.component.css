@@ -1,0 +1,38 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 80px;
+}
+
+mat-card {
+  width: 400px;
+  padding: 20px;
+  text-align: center;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.btn-group {
+  display: flex;
+  justify-content: space-between;
+}
+
+.message {
+  margin-top: 10px;
+  color: #1976d2;
+}
+.expand-btn {
+  background: none;
+  border: none;
+  color: #1976d2;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0;
+}
+
+.expand-btn:hover {
+  text-decoration: underline;
+}
