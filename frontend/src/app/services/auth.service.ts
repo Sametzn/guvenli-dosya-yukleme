@@ -7,12 +7,12 @@ import { Observable } from 'rxjs';
 })
 export class AuthService {
 
-  private baseUrl = 'http://127.0.0.1:8000/api/';  // Django backend adresi
+  private baseUrl = 'https://guvenli-dosya-yukleme.onrender.com/api';  // Django backend adresi
 
   constructor(private http: HttpClient) { }
 
 register(username: string, password: string) {
-  return this.http.post('http://127.0.0.1:8000/api/register/', {
+  return this.http.post('https://guvenli-dosya-yukleme.onrender.com/api/register/', {
     username,
     password
   });

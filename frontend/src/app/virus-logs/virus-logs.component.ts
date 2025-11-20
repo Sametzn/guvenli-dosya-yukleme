@@ -34,7 +34,7 @@ toggleExpand(row: any) {
   loadLogs() {
     const token = sessionStorage.getItem("token");
 
-    this.http.get("http://127.0.0.1:8000/api/virus_logs/", {
+    this.http.get("https://guvenli-dosya-yukleme.onrender.com/api/virus_logs/", {
       headers: new HttpHeaders({ "Authorization": `Token ${token}` })
     }).subscribe({
       next: (res: any) => {

@@ -72,7 +72,7 @@ export class UserDashboardComponent implements OnInit {
 loadFiles() {
   const headers = new HttpHeaders({ 'Authorization': `Token ${this.token}` });
 
-  this.http.get('http://127.0.0.1:8000/api/list_files/', { headers })
+  this.http.get('https://guvenli-dosya-yukleme.onrender.com/api/list_files/', { headers })
     .subscribe((res: any) => {
       this.dataSource.data = res.files;
       this.dataSource.sort = this.sort;
@@ -82,7 +82,7 @@ loadFiles() {
   loadQuota() {
     const headers = new HttpHeaders({ 'Authorization': `Token ${this.token}` });
 
-    this.http.get('http://127.0.0.1:8000/api/user_stats/', { headers })
+    this.http.get('https://guvenli-dosya-yukleme.onrender.com/api/user_stats/', { headers })
       .subscribe((res: any) => {
         this.quota.limit = res.max_storage_mb;
         this.quota.used = res.used_storage_mb;
