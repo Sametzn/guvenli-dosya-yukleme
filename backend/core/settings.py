@@ -25,7 +25,11 @@ SECRET_KEY = 'django-insecure-tsq)2rnyx*^*190$^nn@_*hu0s#$cfc2yh#$ng$0-(kk6r%r6d
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
+ALLOWED_HOSTS = [
+    'guvenli-dosya-yukleme.onrender.com',
+    'localhost',
+    '127.0.0.1'
+]
 
 # Application definition
 
