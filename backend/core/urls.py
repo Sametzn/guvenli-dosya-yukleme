@@ -20,6 +20,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf.urls.static import static
 from django.conf import settings
 from upload.views import virus_logs
+from .views import home
+
 
 
 urlpatterns = [
@@ -28,6 +30,8 @@ urlpatterns = [
     path('api/virus_logs/', virus_logs),
     path('api/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path("", home),
+
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
