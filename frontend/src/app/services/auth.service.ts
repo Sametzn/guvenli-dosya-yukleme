@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class AuthService {
 
-  private baseUrl = 'https://guvenli-dosya-yukleme.onrender.com/api/';  // Django backend adresi
+  private baseUrl = 'https://guvenli-dosya-yukleme.onrender.com/';  // Django backend adresi
 
   constructor(private http: HttpClient) { }
 
