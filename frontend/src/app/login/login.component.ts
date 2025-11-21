@@ -38,7 +38,7 @@ export class LoginComponent {
   login() {
     const data = { username: this.username, password: this.password };
 
-    this.http.post('https://guvenli-dosya-yukleme.onrender.com/api/login/', data).subscribe({
+    this.http.post('https://guvenli-dosya-yukleme.onrender.com/login/', data).subscribe({
       next: (res: any) => {
         sessionStorage.setItem('token', res.token);
         sessionStorage.setItem('user_level', res.user_level);
