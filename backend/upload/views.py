@@ -27,7 +27,7 @@ def get_sha256(scan_result):
         return scan_result.get("meta", {}).get("file_info", {}).get("sha256")
     return None
 # ======================================================
-#  LOGIN
+
 # ======================================================
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -57,7 +57,7 @@ def login_user(request):
 
 
 # ======================================================
-#  REGISTER
+
 # ======================================================
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -77,7 +77,7 @@ def register(request):
 
 
 # ======================================================
-#  USER STATS (ÇAKIŞMASIZ TEK DOĞRU HAL)
+
 # ======================================================
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -101,7 +101,7 @@ def user_stats(request):
 
 
 # ======================================================
-#  UPLOAD FILE
+
 # ======================================================
 
 
@@ -116,16 +116,15 @@ def upload_file(request):
     if not file:
         return Response({"message": "Dosya seçilmedi."}, status=400)
 
-    # KOTA KONTROLÜ
+
     remaining = quota.max_storage - quota.used_storage
     if file.size > remaining:
         return Response({"message": "Kota yetersiz."}, status=403)
 
-    # BOYUT KONTROLÜ
+
     if file.size > 10 * 1024 * 1024:
         return Response({"message": "Dosya 10MB'dan büyük olamaz."}, status=400)
 
-    # ❗ UZANTI ENGELLEME (Magic şaşırsa bile EXE’yi engeller)
     ext = file.name.lower()
     blocked_ext = [
         ".exe", ".bat", ".cmd", ".sh", ".js",
@@ -135,7 +134,7 @@ def upload_file(request):
         return Response({"message": "MIME türü engellendi"}, status=400)
 
 
-    # MIME TESPİTİ
+
     try:
         mime = magic.from_buffer(file.read(2048), mime=True)
     except:
@@ -143,9 +142,8 @@ def upload_file(request):
     finally:
         file.seek(0)
 
-    # ❌ YASAK MIME LİSTESİ (Hem magic hem test için)
     blocked = [
-        "application/x-msdownload",    # test fonksiyonu bunu gönderiyor
+        "application/x-msdownload",
         "application/x-dosexec",
         "application/x-executable",
         "application/vnd.microsoft.portable-executable",
@@ -154,7 +152,7 @@ def upload_file(request):
     if mime in blocked:
         return Response({"message": f"MIME türü engellendi: {mime}"}, status=400)
 
-    # ✔ İZİN VERİLENLER
+
     allowed = [
         'application/pdf',
         'image/jpeg',
@@ -166,17 +164,15 @@ def upload_file(request):
     if mime not in allowed:
         return Response({"message": f"MIME türü engellendi: {mime}"}, status=400)
 
-    # GEÇİCİ KAYDET
+
     temp_path = f"temp_{file.name}"
     with open(temp_path, "wb+") as temp:
         for chunk in file.chunks():
             temp.write(chunk)
 
-    # VIRUSTOTAL TARAMA
     infected, scan_result = vtutils.scan_file_with_virustotal(temp_path)
     os.remove(temp_path)
 
-    # 🔥 VİRÜSLÜ
     if infected:
         VirusLog.objects.create(
             user=request.user,
@@ -191,7 +187,6 @@ def upload_file(request):
             "scan_result": scan_result
         }, status=400)
 
-    # ✔ TEMİZ
     VirusLog.objects.create(
         user=request.user,
         action="UPLOAD_OK",
@@ -201,7 +196,6 @@ def upload_file(request):
         result_detail=str(scan_result)
     )
 
-    # GERÇEK KAYDETME
     upload_dir = f"media/user_files/{request.user.username}"
     os.makedirs(upload_dir, exist_ok=True)
 
@@ -238,7 +232,7 @@ def upload_file(request):
 
 
 # ======================================================
-#  LIST FILES
+
 # ======================================================
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -257,7 +251,7 @@ def list_files(request):
 
 
 # ======================================================
-#  DOWNLOAD FILE
+
 # ======================================================
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -281,7 +275,7 @@ def download_file(request, file_id):
 
 
 # ======================================================
-#  DELETE FILE
+
 # ======================================================
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
@@ -313,7 +307,7 @@ def delete_file(request, file_id):
 
 
 # ======================================================
-#  ADMIN USER LIST  (Eksik olan eklendi!)
+
 # ======================================================
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -348,13 +342,13 @@ def admin_list_users(request):
 
 
 # ======================================================
-#  ADMIN FILE LIST
+
 # ======================================================
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def admin_list_user_files(request, user_id):
 
-    # Sadece Admin veya Süper Admin
+
     if not request.user.is_staff and not request.user.is_superuser:
         return Response({"message": "Yetkiniz yok."}, status=403)
 
@@ -396,7 +390,7 @@ def admin_download_user_file(request, file_id):
     return response
 
 # ======================================================
-#  ADMIN DELETE FILE (HATASIZ)
+
 # ======================================================
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
@@ -410,28 +404,28 @@ def admin_delete_user_file(request, file_id):
     except UploadedFile.DoesNotExist:
         return Response({"message": "Dosya bulunamadı."}, status=404)
 
-    # Fiziksel dosyayı sil
+
     file_path = file_obj.file.path
     if os.path.exists(file_path):
         os.remove(file_path)
 
-    # Kullanicinin kotasindan düş
+
     quota = UserQuota.objects.get(user=file_obj.user)
     quota.used_storage = max(0, quota.used_storage - file_obj.size)
     quota.save()
 
-    # DB'den sil
+
     file_obj.delete()
 
     return Response({"message": "Dosya silindi."})
 
 
 
-# Kullanıcı oluşturma (admin)
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def admin_create_user(request):
-    actor = request.user  # işlemi yapan kullanıcı
+    actor = request.user
 
     username = request.data.get('username')
     password = request.data.get('password')
@@ -444,7 +438,7 @@ def admin_create_user(request):
         return Response({"message": "Bu kullanıcı zaten var."}, status=400)
 
     # -------------------------
-    # ADMİN → sadece normal kullanıcı açabilir
+
     # -------------------------
     if actor.is_staff and not actor.is_superuser:
         if level != "Kullanıcı":
@@ -454,7 +448,7 @@ def admin_create_user(request):
         return Response({"message": f"{username} adlı kullanıcı oluşturuldu."})
 
     # -------------------------
-    # SÜPER ADMİN → her seviyede kullanıcı oluşturabilir
+
     # -------------------------
     if actor.is_superuser:
         user = User.objects.create_user(username=username, password=password)
@@ -470,7 +464,7 @@ def admin_create_user(request):
         return Response({"message": f"{username} adlı {level} oluşturuldu."})
 
     # -------------------------
-    # Normal kullanıcı → yetki yok
+
     # -------------------------
     return Response({"message": "Bu işlemi yapmaya yetkiniz yok."}, status=403)
 
@@ -489,27 +483,27 @@ def promote_user(request, user_id):
         return Response({"message": "Kullanıcı bulunamadı."}, status=404)
 
     # -------------------------
-    # SÜPER ADMİN → HERKESİ YÜKSELTEBİLİR
+
     # -------------------------
     if actor.is_superuser:
 
-        # Normal → Admin
+
         if not user.is_staff and not user.is_superuser:
             user.is_staff = True
             user.save()
             return Response({"message": f"{user.username} artık Admin."})
 
-        # Admin → Süper Admin
+
         if user.is_staff and not user.is_superuser:
             user.is_superuser = True
             user.save()
             return Response({"message": f"{user.username} artık Süper Admin."})
 
-        # Süper Admin → daha fazla yükseltilemez
+
         return Response({"message": f"{user.username} zaten Süper Admin."})
 
     # -------------------------
-    # ADMİN → SINIRLI İŞLEM
+
     # -------------------------
     if actor.is_staff:
 
@@ -531,7 +525,7 @@ def promote_user(request, user_id):
 def demote_user(request, user_id):
     actor = request.user
 
-    # Kendine işlem yapamaz
+
     if actor.id == user_id:
         return Response({"message": "Kendi seviyenizi düşüremezsiniz."}, status=403)
 
@@ -545,13 +539,13 @@ def demote_user(request, user_id):
     # -------------------------
     if actor.is_superuser:
 
-        # Süper Admin → Admin
+
         if user.is_superuser:
             user.is_superuser = False
             user.save()
             return Response({"message": f"{user.username} artık Admin."})
 
-        # Admin → Normal kullanıcı
+
         if user.is_staff:
             user.is_staff = False
             user.save()
@@ -560,7 +554,7 @@ def demote_user(request, user_id):
         return Response({"message": f"{user.username} zaten Normal kullanıcı."})
 
     # -------------------------
-    # ADMİN →
+    # ADMİN
     # -------------------------
     if actor.is_staff:
 
@@ -589,7 +583,7 @@ def update_quota(request, user_id):
         return Response({"message": "Kullanıcı kotası bulunamadı."}, status=404)
 
     # -------------------------
-    # YETKİ KONTROLÜ
+
     # -------------------------
 
     # Kimse kendi kotasını değiştiremez
@@ -606,7 +600,7 @@ def update_quota(request, user_id):
         return Response({"message": "Bu işlemi yapmaya yetkiniz yok."}, status=403)
 
     # -------------------------
-    # KOTA GÜNCELLEME
+
     # -------------------------
 
     new_limit_mb = request.data.get("new_limit_mb")
@@ -630,13 +624,12 @@ def update_quota(request, user_id):
         "new_limit_mb": new_limit_mb
     })
 
-# Kullanıcı silme (admin)
+# Kullanıcı silme
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def admin_delete_user(request, user_id):
     actor = request.user  # işlemi yapan
 
-    # ❌ Kimse kendini silemez
     if actor.id == user_id:
         return Response({"message": "Kendinizi silemezsiniz."}, status=403)
 
@@ -646,15 +639,14 @@ def admin_delete_user(request, user_id):
         return Response({"message": "Kullanıcı bulunamadı."}, status=404)
 
     # -------------------------
-    # SÜPER ADMİN → herkes üzerinde işlem yapabilir
-    # KENDİSİ dışındaki tüm süper adminleri de silebilir ✔
+
     # -------------------------
     if actor.is_superuser:
         user.delete()
         return Response({"message": f'{user.username} başarıyla silindi.'})
 
     # -------------------------
-    # ADMİN → Süper Admin hariç herkesi silebilir
+
     # -------------------------
     if actor.is_staff:
 
@@ -666,7 +658,7 @@ def admin_delete_user(request, user_id):
         return Response({"message": f'{user.username} başarıyla silindi.'})
 
     # -------------------------
-    # Normal kullanıcı → hiçbir silme işlemi yapamaz
+
     # -------------------------
     return Response({"message": "Bu işlemi yapmaya yetkiniz yok."}, status=403)
 @api_view(['GET'])

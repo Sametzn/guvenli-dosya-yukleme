@@ -63,7 +63,7 @@ export class AdminDashboardComponent implements OnInit {
   loadUserStats() {
     const headers = new HttpHeaders({ 'Authorization': `Token ${this.token}` });
 
-    this.http.get('http://127.0.0.1:8000/api/admin/user-stats/', { headers }).subscribe({
+    this.http.get('https://guvenli-dosya-yukleme.onrender.com/api/admin/user-stats/', { headers }).subscribe({
       next: (res: any) => {
         this.users = res.users;
         this.currentUserLevel = res.current_user_level;
@@ -81,7 +81,7 @@ export class AdminDashboardComponent implements OnInit {
   loadUsers() {
     const headers = new HttpHeaders({ 'Authorization': `Token ${this.token}` });
 
-    this.http.get('http://127.0.0.1:8000/api/admin/list_users/', { headers })
+    this.http.get('https://guvenli-dosya-yukleme.onrender.com/api/admin/list_users/', { headers })
       .subscribe((res: any) => {
         this.users = res.users;
       });
@@ -98,7 +98,7 @@ export class AdminDashboardComponent implements OnInit {
 
       const headers = new HttpHeaders({ 'Authorization': `Token ${this.token}` });
 
-      this.http.post('http://127.0.0.1:8000/api/admin/create-user/', result, { headers }).subscribe({
+      this.http.post('https://guvenli-dosya-yukleme.onrender.com/api/admin/create-user/', result, { headers }).subscribe({
         next: (res: any) => {
           this.message = res.message;
           this.loadUserStats();
@@ -130,7 +130,7 @@ export class AdminDashboardComponent implements OnInit {
       const headers = new HttpHeaders({ 'Authorization': `Token ${this.token}` });
 
       this.http.post(
-        `http://127.0.0.1:8000/api/admin/update-quota/${user.id}/`,
+        `https://guvenli-dosya-yukleme.onrender.com/api/admin/update-quota/${user.id}/`,
         { new_limit_mb: newLimitMb },
         { headers }
       ).subscribe({
@@ -148,7 +148,7 @@ export class AdminDashboardComponent implements OnInit {
   promoteUser(id: number) {
     const headers = new HttpHeaders({ 'Authorization': `Token ${this.token}` });
 
-    this.http.post(`http://127.0.0.1:8000/api/admin/promote-user/${id}/`, {}, { headers }).subscribe({
+    this.http.post(`https://guvenli-dosya-yukleme.onrender.com/api/admin/promote-user/${id}/`, {}, { headers }).subscribe({
       next: (res: any) => {
         this.message = res.message;
         this.loadUserStats();
@@ -162,7 +162,7 @@ export class AdminDashboardComponent implements OnInit {
   demoteUser(id: number) {
     const headers = new HttpHeaders({ 'Authorization': `Token ${this.token}` });
 
-    this.http.post(`http://127.0.0.1:8000/api/admin/demote-user/${id}/`, {}, { headers }).subscribe({
+    this.http.post(`https://guvenli-dosya-yukleme.onrender.com/api/admin/demote-user/${id}/`, {}, { headers }).subscribe({
       next: (res: any) => {
         this.message = res.message;
         this.loadUserStats();
@@ -178,7 +178,7 @@ export class AdminDashboardComponent implements OnInit {
 
     const headers = new HttpHeaders({ 'Authorization': `Token ${this.token}` });
 
-    this.http.delete(`http://127.0.0.1:8000/api/admin/delete-user/${id}/`, { headers }).subscribe({
+    this.http.delete(`https://guvenli-dosya-yukleme.onrender.com/api/admin/delete-user/${id}/`, { headers }).subscribe({
       next: (res: any) => {
         this.message = res.message;
         this.loadUserStats();

@@ -49,7 +49,7 @@ export class UserFilesDialogComponent implements OnInit {
   // =========================================================
   loadFiles() {
     this.http.get(
-      `http://127.0.0.1:8000/api/admin/list_user_files/${this.data.user_id}/`,
+      `https://guvenli-dosya-yukleme.onrender.com/api/admin/list_user_files/${this.data.user_id}/`,
       { headers: this.headers }
     )
     .subscribe({
@@ -66,7 +66,7 @@ export class UserFilesDialogComponent implements OnInit {
 
 downloadFile(file_id: number) {
   this.http.get(
-    `http://127.0.0.1:8000/api/admin/download_user_file/${file_id}/`,
+    `https://guvenli-dosya-yukleme.onrender.com/api/admin/download_user_file/${file_id}/`,
     {
       headers: this.headers,
       responseType: 'blob'
@@ -92,7 +92,7 @@ downloadFile(file_id: number) {
     if (!confirm("Bu dosya silinsin mi?")) return;
 
     this.http.delete(
-      `http://127.0.0.1:8000/api/admin/delete_user_file/${file_id}/`,
+      `https://guvenli-dosya-yukleme.onrender.com/api/admin/delete_user_file/${file_id}/`,
       { headers: this.headers }
     )
     .subscribe({
