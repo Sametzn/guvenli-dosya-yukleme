@@ -7,18 +7,19 @@ import { Observable } from 'rxjs';
 })
 export class AuthService {
 
-  private baseUrl = 'https://guvenli-dosya-yukleme.onrender.com/';  // Django backend adresi
+  private baseUrl = 'https://guvenli-dosya-yukleme.onrender.com/api/';
 
   constructor(private http: HttpClient) { }
 
-register(username: string, password: string) {
-  return this.http.post('https://guvenli-dosya-yukleme.onrender.com/api/register/', {
-    username,
-    password
-  });
-}
+  register(username: string, password: string) {
+    return this.http.post(`${this.baseUrl}register/`, {
+      username,
+      password
+    });
+  }
 
   login(userData: any): Observable<any> {
     return this.http.post(`${this.baseUrl}login/`, userData);
   }
 }
+
